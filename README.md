@@ -10,14 +10,19 @@
 ## Badges
 **🚆 PULSE: Live Mumbai Transit Navigator**
 
-![Python]
-![Streamlit]
-![SQLite3]
-![Status]
-![Safety](
-![License](
+[Python]
 
-> **The Smart, Safe, and Proactive Transit Ecosystem for Mumbaikars.** 🌆
+[Streamlit]
+
+[SQLite3]
+
+[Status]
+
+[Safety]
+
+[License]
+
+**The Smart, Safe, and Proactive Transit Ecosystem for Mumbaikars.** 🌆
 
 ##  Key Features & Capabilities
 
@@ -49,55 +54,98 @@
 
 ## RoadMap & MindMap
 **PULSE_Transit_Ecosystem/**
-│
-├── 🖥️ 1. FRONTEND_UI_LAYER (Streamlit)
+
+
+├── **🖥️ 1. FRONTEND_UI_LAYER (Streamlit)**
+
 │   ├── 🎨 Custom_CSS/
+
 │   │   ├── Glassmorphism_Cards
+
 │   │   └── Gradient_Hover_Buttons
+
 │   ├── 🎬 Lottie_Animations/
+
 │   │   └── Login_Screen_Train_JSON
+
 │   ├── 🗺️ Folium_Live_Maps/
+
 │   │   └── Interactive_Route_Plotting
+
 │   └── 🌍 Localization/
+
 │       └── Multi_Language (EN, HI, MR)
 │
-├── ⚙️ 2. BACKEND_&_DATABASE (SQLite3)
+├── **⚙️ 2. BACKEND_&_DATABASE (SQLite3)**
+
 │   ├── 🗄️ pulse_database.db
+
 │   │   └── transit_logs_table
+
 │   ├── 🔄 Operations/
+
 │   │   ├── generate_journey_id()
+
 │   │   ├── log_eta_updates()
+
 │   │   └── log_sos_emergencies()
+
 │   └── 🛠️ Admin_Controls/
+
 │       ├── Active_SOS_Monitor
+
 │       └── CSV_Data_Export
+
 │
-├── 🧩 3. MICROSERVICES (Python Modules)
+├── **🧩 3. MICROSERVICES (Python Modules)**
+
 │   ├── 🐍 app.py                  -> (Main Application & Logic Routing)
+
 │   ├── 🐍 db_manager.py           -> (SQL Queries & Admin Panel Logic)
+
 │   ├── 🐍 ai_predictor.py         -> (Crowd Density & Monsoon Logic)
+
 │   ├── 🐍 womens_safety.py        -> (Guardian Mode & Tracking Links)
+
 │   ├── 🐍 accident_prevention.py  -> (Hazards & De-boarding Alerts)
+
 │   └── 🐍 ticket_generator.py     -> (Fare Calculation & QR Ticket)
 │
-├── 👥 4. USER_ROLES_&_FEATURES
+
+├── **👥 4. USER_ROLES_&_FEATURES**
+
 │   ├── 🚇 Commuter (B2C)
+
 │   │   ├── Enter Source/Destination
+
 │   │   ├── Pay Fare & Get QR Ticket
+
 │   │   ├── View AI Crowd Predictor
+
 │   │   ├── Get Proactive ETA Push Alerts
+
 │   │   └── Trigger SOS in Emergency
+
 │   │
 │   └── 👮 Transit_Admin (B2G)
+
 │       ├── Secure Login Panel
+
 │       ├── Monitor Red-Alert SOS Triggers
+
 │       └── Download Commuter Data for Analytics
+
 │
-└── 🚀 5. FUTURE_ROADMAP (Post-Hackathon)
-    ├── Phase_1: ☁️ Cloud Deployment (Render/AWS)
-    ├── Phase_2: 📡 Real-time GPS API Integration
-    ├── Phase_3: 💳 UPI Payment Gateway for Tickets
-    └── Phase_4: 📱 React Native Mobile App Conversion
+
+└── **🚀 5. FUTURE_ROADMAP (Post-Hackathon)**
+
+├── Phase_1: ☁️ Cloud Deployment (Render/AWS)
+    
+├── Phase_2: 📡 Real-time GPS API Integration
+
+├── Phase_3: 💳 UPI Payment Gateway for Tickets
+
+└── Phase_4: 📱 React Native Mobile App Conversion
 
 ## Explaination of Flowchart
 **🚶‍♀️ 1. The Commuter Flow (Normal User Journey)**
@@ -142,26 +190,40 @@ This flowchart details the backend operations designed for Transit Authorities:
 ## Tech Stack
 **PULSE_Tech_Stack/**
 │
-├── 🖥️ Frontend (UI & UX)
+├── **🖥️ Frontend (UI & UX)**
+
 │   ├── ⚛️ Framework: Streamlit
+
 │   ├── 🎨 Styling: Custom CSS3 (Glassmorphism, Hover Gradients)
+
 │   ├── 🎬 Animations: Lottie JSON (streamlit-lottie)
+
 │   └── 🗺️ Mapping Engine: Folium & streamlit-folium
+
 │
-├── ⚙️ Backend (Core Logic)
+├── **⚙️ Backend (Core Logic)**
+
 │   ├── 🐍 Language: Python 3.x
+
 │   ├── 🐼 Data Processing: Pandas
+
 │   └── 📦 Core Libraries: datetime, random, hashlib, requests, time
+
 │
-├── 🗄️ Database (Storage)
+├── **🗄️ Database (Storage)**
+
 │   ├── 🗃️ Type: Relational SQL
+
 │   ├── 🛢️ Engine: SQLite3
+
 │   └── 🏗️ Schema: Dynamic Journey ID & SOS Logging
+
 │
-└── 🧠 Key Algorithms (Microservices)
-    ├── 🎟️ Ticketing: Custom Cryptographic Hashing
-    ├── 🤖 Crowd Prediction: Rule-based AI Weightage System
-    └── 🚨 Safety Alerts: Real-time ETA Monitor Engine
+└── **🧠 Key Algorithms (Microservices)**
+
+├── 🤖 Crowd Prediction: Rule-based AI Weightage System
+
+└── 🚨 Safety Alerts: Real-time ETA Monitor Engine
 
 ## SetUp & Instructions
 **Step 1: Check Python**
@@ -184,8 +246,20 @@ The app should automatically open in your web browser. If it does not open, just
 And also the project is deployed using Streamlit, so you can use it for live demo *https://pulse-real-time-transit.streamlit.app/*
 
 ## ScreenShots
+<img width="1920" height="1080" alt="Screenshot (54)" src="https://github.com/user-attachments/assets/1bf61496-41c4-4a6e-a272-5b249d2f46c3" />
 
-## Frequently Asked Questions (FAQs)
+<img width="1920" height="1080" alt="Screenshot (55)" src="https://github.com/user-attachments/assets/013caeab-01de-4baa-a276-422962f620ce" />
+
+<img width="1920" height="1080" alt="Screenshot (56)" src="https://github.com/user-attachments/assets/03bd9918-5230-4256-89f0-c04c89a9a85e" />
+<img width="1920" height="1080" alt="Screenshot (58)" src="https://github.com/user-attachments/assets/8e8c12cd-5ceb-4d34-8380-fb727d6d77ab" />
+
+<img width="1920" height="1080" alt="Screenshot (59)" src="https://github.com/user-attachments/assets/92260678-584d-4b0f-91c2-ac92549ee69f" />
+
+<img width="1920" height="1080" alt="Screenshot (60)" src="https://github.com/user-attachments/assets/458aa392-093e-40cd-813c-3d34eb35d988" />
+
+
+## Frequently Asked Questions (FAQs)<img width="1920" height="1080" alt="Screenshot (57)" src="https://github.com/user-attachments/assets/50c8abaf-a210-4e56-918f-b5e411f1bb60" />
+
 
 **Ques 1:** *🚇 What exactly is PULSE?*
 **Ans:** *PULSE is a complete live transit ecosystem for Mumbai locals. It doesn’t just show routes; it predicts crowd density, warns about station hazards, generates dynamic QR tickets, and provides proactive safety alerts for commuters*.
