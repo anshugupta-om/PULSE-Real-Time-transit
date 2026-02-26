@@ -11,7 +11,6 @@ import os
 try:
     from ai_predictor import predict_crowd_density
     from db_manager import log_journey_sql, get_admin_dataframe, clear_all_data, get_next_journey_id
-    
     from womens_safety import get_womens_helpline, trigger_sos_alert
     from accident_prevention import get_station_hazard, check_deboarding_risk
     MODULES_LOADED = True
@@ -251,8 +250,6 @@ def main_app():
 
         is_monsoon = st.checkbox(t["monsoon"])
 
-        # --- SMART TICKET GENERATOR ---
-       
 
         if st.button(t["start"]):
             if source == destination:
