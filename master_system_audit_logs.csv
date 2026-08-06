@@ -1,0 +1,24 @@
+Timestamp,Username,Activity Category,Source / Location,Destination / Action,Intent / Purpose / Query,System Status Mode
+2026-08-06 19:15:12,msks,USER_LOGIN,Enterprise Portal,Session Granted,User logged in successfully as user,AUTHENTICATED
+2026-08-06 19:15:18,msks,CHATBOT_INTERACTION,Pulse Buddy AI,HELPLINE_QUERY,Show emergency helpline numbers,System
+2026-08-06 19:15:41,anshu,USER_LOGIN,Enterprise Portal,Session Granted,User logged in successfully as admin,AUTHENTICATED
+2026-08-06 19:16:24,anshu,CHATBOT_INTERACTION,Pulse Buddy AI,HELPLINE_QUERY,Show emergency helpline numbers,System
+2026-08-06 19:17:11,msks,USER_LOGIN,Enterprise Portal,Session Granted,User logged in successfully as user,AUTHENTICATED
+2026-08-06 19:17:15,msks,JOURNEY_SEARCH,Western Line (Andheri East),Borivali,Commuter route search from Andheri East to Borivali,LIVE_TRACKING
+2026-08-06 19:17:16,msks,JOURNEY_SEARCH,Western Line (Andheri East),Borivali,Commuter route search from Andheri East to Borivali,LIVE_TRACKING
+2026-08-06 19:17:21,msks,JOURNEY_SEARCH,Western Line (Andheri East),Borivali,Commuter route search from Andheri East to Borivali,LIVE_TRACKING
+2026-08-06 19:17:30,msks,CHATBOT_INTERACTION,Pulse Buddy AI,HARASSMENT_ALERT,Report Seat Harassment (Discreet),Silent_Mode
+2026-08-06 19:17:34,msks,JOURNEY_SEARCH,Western Line (Andheri East),Borivali,Commuter route search from Andheri East to Borivali,LIVE_TRACKING
+2026-08-06 19:17:34,msks,JOURNEY_SEARCH,Western Line (Andheri East),Borivali,Commuter route search from Andheri East to Borivali,LIVE_TRACKING
+2026-08-06 19:17:37,msks,JOURNEY_SEARCH,Western Line (Andheri East),Borivali,Commuter route search from Andheri East to Borivali,LIVE_TRACKING
+2026-08-06 19:17:55,anshu,USER_LOGIN,Enterprise Portal,Session Granted,User logged in successfully as admin,AUTHENTICATED
+2026-08-06 19:22:39,msks,USER_LOGIN,Enterprise Portal,Session Granted,User logged in successfully as user,AUTHENTICATED
+2026-08-06 19:26:10,msks,USER_LOGIN,Enterprise Portal,Session Granted,User logged in successfully as user,AUTHENTICATED
+2026-08-06 19:29:01,msks,USER_LOGIN,Enterprise Portal,Session Granted,User logged in successfully as user,AUTHENTICATED
+2026-08-06 19:31:11,msks,USER_LOGIN,Enterprise Portal,Session Granted,User logged in successfully as user,AUTHENTICATED
+2026-08-06 19:33:39,msks,USER_LOGIN,Enterprise Portal,Session Granted,User logged in successfully as user,AUTHENTICATED
+2026-08-06 19:38:12,msks,USER_LOGIN,Enterprise Portal,Session Granted,User logged in successfully as user,AUTHENTICATED
+2026-08-06 19:38:25,msks,JOURNEY_SEARCH,Western Line (Andheri East),Borivali,Commuter route search from Andheri East to Borivali,LIVE_TRACKING
+2026-08-06 19:38:25,msks,JOURNEY_SEARCH,Western Line (Andheri East),Borivali,Commuter route search from Andheri East to Borivali,LIVE_TRACKING
+2026-08-06 19:38:30,msks,JOURNEY_SEARCH,Western Line (Andheri East),Borivali,Commuter route search from Andheri East to Borivali,LIVE_TRACKING
+2026-08-06 19:39:03,anshu,USER_LOGIN,Enterprise Portal,Session Granted,User logged in successfully as admin,AUTHENTICATED
