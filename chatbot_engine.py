@@ -1,4 +1,4 @@
-# chatbot_engine.py - Clean Floating Mascot ("Pulse Buddy") - Clipping Bug Fixed
+# chatbot_engine.py - Cohere AI Integrated & Ghosting Bug Fixed
 
 import streamlit as st
 import time
@@ -6,7 +6,15 @@ import random
 from datetime import datetime
 import streamlit.components.v1 as components
 
-# Safe Import
+# API Security ke liye Imports
+import os
+import cohere
+from dotenv import load_dotenv
+
+# Load keys from .env file
+load_dotenv()
+
+# Safe Import for Logging
 try:
     from db_manager import log_chat_message
 except ImportError:
@@ -29,7 +37,7 @@ def get_robot_avatar_html(status_color="#00e5ff", eyes_svg=""):
         <style>
             body {{
                 margin: 0;
-                padding: 12px 0 0 0; /* Top padding added so bounce does not clip antenna */
+                padding: 12px 0 0 0;
                 background: transparent;
                 display: flex;
                 justify-content: center;
@@ -172,49 +180,58 @@ def inject_clean_corner_css():
         box-shadow: 0 0 25px rgba(168,85,247,0.7) !important;
     }
 
-    /* Expanded Chat Modal Box */
     .expanded-chat-window {
-        background: rgba(15, 23, 42, 0.94) !important;
-        backdrop-filter: blur(20px) !important;
-        border: 1px solid rgba(0, 229, 255, 0.35) !important;
+        background: #0f172a !important; 
+        border: 1px solid rgba(0, 229, 255, 0.5) !important;
         border-radius: 22px !important;
         padding: 20px !important;
         box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9) !important;
         margin-top: 15px;
+        z-index: 9999;
     }
 
     .stChatMessage {
-        background: rgba(30, 41, 59, 0.75) !important;
+        background: #1e293b !important;
         border-radius: 14px !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
     }
     </style>
     """, unsafe_allow_html=True)
 
+# ==========================================
+# 🧠 HYBRID AI CHATBOT LOGIC (RULES + COHERE LLM)
+# ==========================================
 def generate_mumbai_transit_reply(user_msg: str, user_name: str) -> tuple[str, str, str, str]:
     msg = user_msg.lower()
 
-    if any(w in msg for w in ["hi", "hello", "hey", "hii", "kaise ho", "namaste"]):
+    # 1. EMERGENCY & SAFETY COMMANDS (Strict Rule-Based)
+    if any(w in msg for w in ["helpline", "number", "police", "rpf"]):
+        log_chat_message(user_name, "HELPLINE_QUERY", user_msg, "System")
         eyes = """
         <svg width="60" height="35" viewBox="0 0 70 40" class="blinking-eyes">
-            <path d="M 12,25 Q 22,10 32,25" stroke="#00e676" stroke-width="5" fill="none" stroke-linecap="round"/>
-            <path d="M 38,25 Q 48,10 58,25" stroke="#00e676" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <circle cx="22" cy="20" r="8" fill="#ff1744"/>
+            <circle cx="48" cy="20" r="8" fill="#ff1744"/>
         </svg>
         """
         return (
-            f"Arey Hey {user_name}! 👋 Main Pulse Buddy hoon! Aaj Local schedule, Metro QR tickets, ya Safety Help mein kya madad karoon?",
-            "#00e676", eyes, "😃 Happy & Welcoming"
+            f"📞 **Official Helpline Numbers:**\n\n"
+            f"* 🛡️ **Railway Police (RPF/GRP):** `1512` / `182`\n"
+            f"* 👩 **Women Safety Helpline:** `103` / `1091`\n"
+            f"* 🚆 **Mumbai Metro Helpline:** `1800 221 088`",
+            "#ff1744", eyes, "🚨 Helpline Alert"
         )
-    elif "english" in msg:
+    elif any(w in msg for w in ["harassment", "report", "unsafe"]):
+        log_chat_message(user_name, "HARASSMENT_ALERT", user_msg, "Silent_Mode")
         eyes = """
         <svg width="60" height="35" viewBox="0 0 70 40" class="blinking-eyes">
-            <circle cx="22" cy="20" r="7" fill="#00e5ff"/>
-            <circle cx="48" cy="20" r="7" fill="#00e5ff"/>
+            <path d="M 12,12 L 28,28 M 28,12 L 12,28" stroke="#ff1744" stroke-width="5" stroke-linecap="round"/>
+            <path d="M 42,12 L 58,28 M 58,12 L 42,28" stroke="#ff1744" stroke-width="5" stroke-linecap="round"/>
         </svg>
         """
         return (
-            f"Sure {user_name}! I am fluent in English. Ask me about Suburban/Metro ticketing, interchange routes, or emergency safety alerts!",
-            "#00e5ff", eyes, "🌐 English Mode"
+            f"🛡️ **Silent RPF Alert Triggered {user_name}!**\n\n"
+            f"Aapka profile alert aur current station metadata RPF desk ko dispatch kar diya gaya hai. Agle stop par security monitor hoga.",
+            "#ff1744", eyes, "🛡️ Silent RPF Active"
         )
     elif any(w in msg for w in ["ticket", "qr", "pass", "uts", "fare"]):
         eyes = """
@@ -244,45 +261,51 @@ def generate_mumbai_transit_reply(user_msg: str, user_name: str) -> tuple[str, s
             f"* **Dadar Hub:** Western ↔ Central Local Line Transfer",
             "#ffb74d", eyes, "🗺️ Route Hub Mode"
         )
-    elif any(w in msg for w in ["helpline", "number", "police", "rpf"]):
-        log_chat_message(user_name, "HELPLINE_QUERY", user_msg, "System")
-        eyes = """
-        <svg width="60" height="35" viewBox="0 0 70 40" class="blinking-eyes">
-            <circle cx="22" cy="20" r="8" fill="#ff1744"/>
-            <circle cx="48" cy="20" r="8" fill="#ff1744"/>
-        </svg>
-        """
-        return (
-            f"📞 **Official Helpline Numbers:**\n\n"
-            f"* 🛡️ **Railway Police (RPF/GRP):** `1512` / `182`\n"
-            f"* 👩 **Women Safety Helpline:** `103` / `1091`\n"
-            f"* 🚆 **Mumbai Metro Helpline:** `1800 221 088`",
-            "#ff1744", eyes, "🚨 Helpline Alert"
-        )
-    elif any(w in msg for w in ["harassment", "report", "unsafe"]):
-        log_chat_message(user_name, "HARASSMENT_ALERT", user_msg, "Silent_Mode")
-        eyes = """
-        <svg width="60" height="35" viewBox="0 0 70 40" class="blinking-eyes">
-            <path d="M 12,12 L 28,28 M 28,12 L 12,28" stroke="#ff1744" stroke-width="5" stroke-linecap="round"/>
-            <path d="M 42,12 L 58,28 M 58,12 L 42,28" stroke="#ff1744" stroke-width="5" stroke-linecap="round"/>
-        </svg>
-        """
-        return (
-            f"🛡️ **Silent RPF Alert Triggered {user_name}!**\n\n"
-            f"Aapka profile alert aur current station metadata RPF desk ko dispatch kar diya gaya hai. Agle stop par security monitor hoga.",
-            "#ff1744", eyes, "🛡️ Silent RPF Active"
-        )
+
+    # 2. GENERAL QUERIES (Handled dynamically by Cohere AI)
     else:
-        eyes = """
-        <svg width="60" height="35" viewBox="0 0 70 40" class="blinking-eyes">
-            <circle cx="22" cy="20" r="7" fill="#00e5ff"/>
-            <circle cx="48" cy="20" r="7" fill="#00e5ff"/>
-        </svg>
-        """
-        return (
-            f"🤖 **PULSE AI Sync:** Main aapki query *'{user_msg}'* ko process kar raha hoon. UTS Tickets, Interchanges, ya Helplines ke baare mein poochiye!",
-            "#00e5ff", eyes, "⚡ Transit Telemetry Sync"
-        )
+        try:
+            cohere_key = os.getenv("COHERE_API_KEY")
+            
+            if not cohere_key:
+                raise ValueError("API Key is missing from .env file!")
+
+            co = cohere.Client(cohere_key) 
+            
+            full_prompt = f"System Instruction: You are 'Pulse Buddy', a highly helpful AI assistant for Mumbai transit. The user's name is {user_name}. Answer the following question in 1 or 2 short sentences. Use emojis.\n\nUser Question: {user_msg}"
+            
+            response = co.chat(
+                model="command-r7b-12-2024",
+                message=full_prompt,
+                temperature=0.3
+            )
+            
+            ai_reply = response.text
+            
+            eyes = """
+            <svg width="60" height="35" viewBox="0 0 70 40" class="blinking-eyes">
+                <circle cx="22" cy="20" r="7" fill="#a855f7"/>
+                <circle cx="48" cy="20" r="7" fill="#a855f7"/>
+            </svg>
+            """
+            return (
+                ai_reply,
+                "#a855f7",
+                eyes, 
+                "🧠 Cohere AI Active"
+            )
+            
+        except Exception as e:
+            eyes = """
+            <svg width="60" height="35" viewBox="0 0 70 40" class="blinking-eyes">
+                <circle cx="22" cy="20" r="7" fill="#00e5ff"/>
+                <circle cx="48" cy="20" r="7" fill="#00e5ff"/>
+            </svg>
+            """
+            return (
+                f"🤖 **PULSE Network Error:** Main abhi AI cloud se connect nahi kar paa raha. Please check your API key! (Error: {str(e)})",
+                "#00e5ff", eyes, "⚡ Offline Mode"
+            )
 
 def pulse_chatbot():
     inject_clean_corner_css()
@@ -304,19 +327,16 @@ def pulse_chatbot():
     if not st.session_state.chat_open:
         col_empty, col_right_corner = st.columns([3.8, 1.2])
         with col_right_corner:
-            # 1. Floating Animated Robot (Height increased to 160 to prevent antenna clipping)
             robo_html = get_robot_avatar_html(st.session_state.bot_color, st.session_state.bot_eyes_svg)
             components.html(robo_html, height=160)
             
-            # 2. Gradient Colorful Text Directly Below Robot
             st.markdown(
                 '<div class="colorful-bot-label">✨ Hi, I am Pulse Buddy!<br><small style="font-size:11px; opacity:0.8;">Your Personal Assistant</small></div>', 
                 unsafe_allow_html=True
             )
             
-            st.write("") # Small Spacing
+            st.write("") 
             
-            # 3. Clean Tap Button
             if st.button("💬 Tap to Chat", key="open_buddy_chat_btn", use_container_width=True):
                 st.session_state.chat_open = True
                 st.rerun()
@@ -325,68 +345,70 @@ def pulse_chatbot():
     # STATE 2: EXPANDED INTERACTIVE CHAT PANEL
     # ----------------------------------------------------
     else:
-        r_col1, r_col2 = st.columns([0.8, 4.2])
-        with r_col1:
-            robo_html = get_robot_avatar_html(st.session_state.bot_color, st.session_state.bot_eyes_svg)
-            components.html(robo_html, height=150)
-        with r_col2:
-            st.markdown(f"""
-            <div style="padding-top:10px;">
-                <h3 style="color:#00e5ff; margin:0; font-weight:800;">Pulse Buddy (Personal AI Copilot)</h3>
-                <span style="color:{st.session_state.bot_color}; font-weight:700; font-size:13px;">● {st.session_state.bot_status_title}</span>
-            </div>
-            """, unsafe_allow_html=True)
+        master_chat_box = st.container() 
+        with master_chat_box:
+            r_col1, r_col2 = st.columns([0.8, 4.2])
+            with r_col1:
+                robo_html = get_robot_avatar_html(st.session_state.bot_color, st.session_state.bot_eyes_svg)
+                components.html(robo_html, height=150)
+            with r_col2:
+                st.markdown(f"""
+                <div style="padding-top:10px;">
+                    <h3 style="color:#00e5ff; margin:0; font-weight:800;">Pulse Buddy (Personal AI Copilot)</h3>
+                    <span style="color:{st.session_state.bot_color}; font-weight:700; font-size:13px;">● {st.session_state.bot_status_title}</span>
+                </div>
+                """, unsafe_allow_html=True)
 
-        col_close_btn, col_empty = st.columns([1.2, 3.8])
-        with col_close_btn:
-            if st.button("✖ Close Chat", key="close_chat_btn", use_container_width=True):
-                st.session_state.chat_open = False
+            col_close_btn, col_empty = st.columns([1.2, 3.8])
+            with col_close_btn:
+                if st.button("✖ Close Chat", key="close_chat_btn", use_container_width=True):
+                    st.session_state.chat_open = False
+                    st.rerun()
+
+            # Messages History
+            if "chat_messages" not in st.session_state:
+                st.session_state.chat_messages = [
+                    {
+                        "role": "assistant", 
+                        "content": f"Arey Hey {current_user}! 👋 Main aapka **Pulse Buddy** hoon. AI Cloud active hai, kuch bhi poochiye!"
+                    }
+                ]
+
+            # Quick Actions (Restored Interchanges button instead of Local Weather)
+            st.caption("⚡ Quick Actions:")
+            col_q1, col_q2, col_q3, col_q4 = st.columns(4)
+            quick_action = None
+            with col_q1:
+                if st.button("🎫 QR & UTS Tickets", use_container_width=True):
+                    quick_action = "How to buy QR and UTS tickets?"
+            with col_q2:
+                if st.button("📞 Helplines", use_container_width=True):
+                    quick_action = "Show emergency helpline numbers"
+            with col_q3:
+                if st.button("🔀 Interchanges", use_container_width=True):
+                    quick_action = "Show Metro and Local interchange stations"
+            with col_q4:
+                if st.button("📢 Harassment", use_container_width=True):
+                    quick_action = "Report Seat Harassment (Discreet)"
+
+            chat_placeholder = st.empty()
+            with chat_placeholder.container(height=300):
+                for message in st.session_state.chat_messages:
+                    with st.chat_message(message["role"]):
+                        st.markdown(message["content"])
+
+            user_input = st.chat_input("Talk to Pulse Buddy (e.g., 'Hello', 'Train to Andheri')...")
+
+            if quick_action:
+                user_input = quick_action
+
+            if user_input:
+                st.session_state.chat_messages.append({"role": "user", "content": user_input})
+                
+                bot_reply, color_code, eyes_code, status_title = generate_mumbai_transit_reply(user_input, current_user)
+                st.session_state.bot_color = color_code
+                st.session_state.bot_eyes_svg = eyes_code
+                st.session_state.bot_status_title = status_title
+
+                st.session_state.chat_messages.append({"role": "assistant", "content": bot_reply})
                 st.rerun()
-
-        # Messages History
-        if "chat_messages" not in st.session_state:
-            st.session_state.chat_messages = [
-                {
-                    "role": "assistant", 
-                    "content": f"Arey Hey {current_user}! 👋 Main aapka **Pulse Buddy** hoon. Metro/Local timings, UTS tickets, ya safety help ke liye poochiye!"
-                }
-            ]
-
-        # Quick Actions
-        st.caption("⚡ Quick Actions:")
-        col_q1, col_q2, col_q3, col_q4 = st.columns(4)
-        quick_action = None
-        with col_q1:
-            if st.button("🎫 QR & UTS Tickets", use_container_width=True):
-                quick_action = "How to buy QR and UTS tickets?"
-        with col_q2:
-            if st.button("📞 Helplines", use_container_width=True):
-                quick_action = "Show emergency helpline numbers"
-        with col_q3:
-            if st.button("🔀 Interchanges", use_container_width=True):
-                quick_action = "Show Metro and Local interchange stations"
-        with col_q4:
-            if st.button("📢 Harassment", use_container_width=True):
-                quick_action = "Report Seat Harassment (Discreet)"
-
-        chat_container = st.container(height=300)
-        with chat_container:
-            for message in st.session_state.chat_messages:
-                with st.chat_message(message["role"]):
-                    st.markdown(message["content"])
-
-        user_input = st.chat_input("Talk to Pulse Buddy (e.g., 'Hello', 'Helpline numbers')...")
-
-        if quick_action:
-            user_input = quick_action
-
-        if user_input:
-            st.session_state.chat_messages.append({"role": "user", "content": user_input})
-            
-            bot_reply, color_code, eyes_code, status_title = generate_mumbai_transit_reply(user_input, current_user)
-            st.session_state.bot_color = color_code
-            st.session_state.bot_eyes_svg = eyes_code
-            st.session_state.bot_status_title = status_title
-
-            st.session_state.chat_messages.append({"role": "assistant", "content": bot_reply})
-            st.rerun()
