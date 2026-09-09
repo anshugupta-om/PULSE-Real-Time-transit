@@ -97,18 +97,41 @@ def record_failed_attempt(identity: str):
 def inject_metro_auth_css():
     st.markdown("""
     <style>
+
+    /* ── Moving-train background keyframe ───────────────────
+       Animates background-position so the image pans slowly.
+       Works correctly with background-size: cover + no-repeat.   */
     @keyframes moveTrainBg {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+        0%   { background-position: 0% center; }
+        50%  { background-position: 100% center; }
+        100% { background-position: 0% center; }
     }
 
-    .stApp {
-        background: linear-gradient(rgba(15, 23, 42, 0.70), rgba(15, 23, 42, 0.85)),
-                    url('https://images.unsplash.com/photo-1542296332-2e4473faf563?q=80&w=1920') repeat-x center center fixed;
-        background-size: cover;
-        animation: moveTrainBg 35s ease infinite;
+    /* ── Target BOTH selectors so global_theme !important
+       cannot silently overwrite the image on either. ─────── */
+    .stApp,
+    [data-testid="stAppViewContainer"] {
+        /* FIX 1: !important beats the solid-color rule in global_theme.py  */
+        /* FIX 2: no-repeat – cover already fills the container, tiling     */
+        /*        with repeat-x was contradictory and hid the image.        */
+        /* FIX 3: background-attachment:scroll (was fixed) – fixed breaks   */
+        /*        on iOS Safari / most mobile browsers and can hide the img  */
+        background:
+            linear-gradient(rgba(15, 23, 42, 0.70), rgba(15, 23, 42, 0.85)),
+            url('/app/static/metro.png')
+            no-repeat center center scroll !important;
+        background-size: cover !important;
+        /* FIX 4: animate background-position for the panning effect;       */
+        /*        this only works when background-size isn't "cover" alone  */
+        /*        so we use a 200% wide virtual canvas via background-size  */
+        animation: moveTrainBg 35s ease infinite !important;
     }
+
+    /* Fallback: also patch the inner stMain so content areas stay dark  */
+    [data-testid="stMain"] {
+        background: transparent !important;
+    }
+
     
     @keyframes pulseGlow {
         0% { text-shadow: 0 0 10px #00e5ff, 0 0 20px #00e5ff, 0 0 30px #3b82f6; }

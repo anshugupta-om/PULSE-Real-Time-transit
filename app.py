@@ -19,11 +19,65 @@ from about_pulse import render_about_page  # About PULSE Module
 from config import LANGUAGES, MUMBAI_LOCATIONS, KNOWN_COORDS
 from auth_manager import init_auth_db, login_page, render_admin_user_registry
 from ai_predictor import predict_crowd_density
+from route_recommender import render_route_recommendation
 from digital_twin_ui import render_digital_twin
 from panic_detector import render_safety_system
 from chatbot_engine import pulse_chatbot
 from weather_fx import render_weather_background
 from db_manager import log_journey_event
+
+from global_theme import init_theme, render_theme_selector, apply_global_css
+st.markdown("""
+    <style>
+    /* Force buttons to span full width on mobile screens for easy tapping */
+    @media (max-width: 768px) {
+        .stButton button {
+            width: 100% !important;
+        }
+        .stDownloadButton button {
+            width: 100% !important;
+        }
+        /* Optimize container padding for mobile viewports */
+        .block-container {
+            padding-left: 1rem;
+            padding-right: 1rem;
+            padding-top: 2rem;
+        }
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+
+st.markdown("""
+    <style>
+    /* 1. Fix mobile dropdown and text input readability */
+    @media (max-width: 768px) {
+        .stSelectbox div[data-baseweb="select"] > div, 
+        .stTextInput input {
+            background-color: #1e293b !important;
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+        }
+        /* Ensure dropdown option text is clearly visible */
+        div[data-baseweb="popover"] div {
+            background-color: #1e293b !important;
+            color: #ffffff !important;
+        }
+    }
+
+    /* 2. General Global Text Fix for Selectboxes across all devices */
+    .stSelectbox div[data-baseweb="select"] span {
+        color: #ffffff !important;
+    }
+
+    /* 3. Force buttons to span nicely on mobile */
+    @media (max-width: 768px) {
+        .stButton button {
+            width: 100% !important;
+        }
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 try:
     from db_manager import log_journey_sql, get_admin_dataframe, clear_all_data, get_next_journey_id
@@ -35,6 +89,7 @@ except ImportError as e:
     MODULES_LOADED = False
 
 st.set_page_config(page_title="PULSE - Live Mumbai Navigator", layout="wide")
+apply_global_css()
 init_auth_db()
 
 # Session State Setup
@@ -46,6 +101,8 @@ def get_coordinates(loc_name):
     if loc_name in KNOWN_COORDS: return KNOWN_COORDS[loc_name]
     h = int(hashlib.md5(loc_name.encode()).hexdigest(), 16)
     return [19.0760 + (h%100 - 50)/1000.0, 72.8777 + (h%100 - 50)/1000.0]
+
+
 
 def main_app():
     if not MODULES_LOADED: return
@@ -85,7 +142,9 @@ def main_app():
 
     st.markdown(f"### {t['title']}")
 
-    # Phase 1: Planning Journey
+    # ==========================================
+    # PHASE 1: PLANNING JOURNEY
+    # ==========================================
     if not st.session_state.tracking:
         selected_line = st.selectbox(t["line"], ["Western Line", "Central Line", "Harbour Line"])
         col1, col2 = st.columns(2)
@@ -120,12 +179,13 @@ def main_app():
 
         # Render Commuter Disruption Alert (PERSISTENT FILE BROADCAST)
         render_disruption_and_rerouter()
-        
-        pulse_chatbot()
 
-    # Phase 2: Live Tracking
+    # ==========================================
+    # PHASE 2: LIVE TRACKING
+    # ==========================================
     else:
         st.success(f"{t['tracking_msg']} **{st.session_state.source}** ➡️ **{st.session_state.destination}** via **{st.session_state.selected_line}**")
+        
         if st.checkbox("✅ I have reached my destination!"):
             st.session_state.tracking = False
             log_journey_sql(st.session_state.journey_id, st.session_state.username, st.session_state.selected_line, st.session_state.source, st.session_state.destination, "Journey Completed")
@@ -141,6 +201,19 @@ def main_app():
                 st.session_state.destination, 
                 st.session_state.monsoon_active
             )
+            
+            # Route Recommender Call
+            render_route_recommendation(
+                st.session_state.source,
+                st.session_state.destination,
+                st.session_state.selected_line,
+                density_percent,
+                live_weather["status"]
+            )
+            
+            # ✅ FIX: Force close any leaked HTML tags from Route Recommender
+            st.markdown("</div></div>", unsafe_allow_html=True)
+            st.markdown("---")
 
             render_weather_background(live_weather['status'], st.session_state.monsoon_active, st.session_state.source)
 
@@ -217,9 +290,23 @@ def main_app():
                     st.error("SOS Triggered! Authorities notified.")
                     st.code(f"Share Live Link:\n{emergency_data['share_link']}")
 
-            st.caption("🔄 Auto-refreshing every 30 seconds...")
-            time.sleep(30)
-            st.rerun()
+    # ==========================================
+    # GLOBAL UI ELEMENTS & AUTO-REFRESH
+    # ==========================================
+    
+    st.markdown("<br><br>", unsafe_allow_html=True) 
+    st.markdown("</div>", unsafe_allow_html=True) # Final safety lock
+    
+    # ✅ FIX: Chatbot is isolated here, runs ONCE globally, outside of if/else logic
+    chat_isolation_container = st.container()
+    with chat_isolation_container:
+        pulse_chatbot()
+    
+    # Auto-refresh only triggers if the user is in tracking mode
+    if st.session_state.tracking:
+        st.caption("🔄 Auto-refreshing every 30 seconds...")
+        time.sleep(30)
+        st.rerun()
 
 if __name__ == "__main__":
     if not st.session_state.logged_in:
